@@ -1,0 +1,7 @@
+用于浏览器端的本地存储
+
+ie6/7  UserData
+
+others LocalStorage
+
+以上两项均不可用 则不考虑
