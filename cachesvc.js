@@ -172,12 +172,11 @@ var JSON;JSON||(JSON={}),function(){function f(a){return a<10?"0"+a:a}function q
 		}
 	};
 	cacheSvc.ins = function(nameSpace){
-		var key =  "cas_"+nameSpace;
-		if(!_ins[key])
+		if(!_ins[nameSpace])
 		{
-			_ins[key] = new cacheSvc(nameSpace);
+			_ins[nameSpace] = new cacheSvc(nameSpace);
 		}
-		return _ins[key];	
+		return _ins[nameSpace];	
 	};
 	window.cacheSvc = cacheSvc;
 })();
