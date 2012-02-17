@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>cacheSvc.js</title>
+<style>
+.demoval {width:200px;border-bottom:1px solid #333;padding:10px;}
+</style>
+<script src="../cachesvc.js"></script>
+</head>
+<body>
+<p>demo1:<input id="demo1" class="demoval"/><input type="button" value="save" onclick="save('demo1');"/></p>
+<p>demo2:<input id="demo2" class="demoval"/><input type="button" value="save" onclick="save('demo2');"/></p>
+<p>demo3:<input id="demo3" class="demoval"/><input type="button" value="save" onclick="save('demo3');"/></p>
+<p><input type="button" value="clear" onclick="clear();"></p>
+<script>
+var storeDemo = cacheSvc.ins("demo"),
+	save = function(id){
+		if(storeDemo.set(id,_d(id).value))
+			alert(id+" is saved.");
+		else
+			alert(id+" saved error.");
+	},
+	clear = function(){
+		storeDemo.clear();
+	},
+	_d = function(id){
+		return document.getElementById(id);
+	};
+_d("demo1").value = storeDemo.get("demo1");
+_d("demo2").value = storeDemo.get("demo2");	
+_d("demo3").value = storeDemo.get("demo3");
+</script>
+</body>
+</html>

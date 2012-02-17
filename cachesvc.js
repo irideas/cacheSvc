@@ -15,7 +15,6 @@ var JSON;JSON||(JSON={}),function(){function f(a){return a<10?"0"+a:a}function q
 *
 *
 *
-*
 *  只有.set 出错时会抛出异常
 **/
 (function(){
@@ -86,7 +85,7 @@ var JSON;JSON||(JSON={}),function(){function f(a){return a<10?"0"+a:a}function q
 			get: function(ns,key){
 				if(this._owners[ns]){
 					this._owners[ns].load(ns);
-					return this._owners[ns].getAttribute(key);
+					return this._owners[ns].getAttribute(key)||"";//避免返回null
 				}
 				return "";
 			},
@@ -145,7 +144,8 @@ var JSON;JSON||(JSON={}),function(){function f(a){return a<10?"0"+a:a}function q
 			this._cache[key] = value;
 			try{
 				storeSvc.set(this._ns,key,cacheSvc.serialize(value));
-			}catch(e){throw e;}
+				return true;
+			}catch(e){return false;}
 		},
 		get:function(key){
 			if(this._cache[key]){
