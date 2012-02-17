@@ -9,20 +9,37 @@
 <script src="../cachesvc.js"></script>
 </head>
 <body>
-<p>demo1:<input id="demo1" class="demoval"/><input type="button" value="save" onclick="save('demo1');"/></p>
-<p>demo2:<input id="demo2" class="demoval"/><input type="button" value="save" onclick="save('demo2');"/></p>
-<p>demo3:<input id="demo3" class="demoval"/><input type="button" value="save" onclick="save('demo3');"/></p>
-<p><input type="button" value="clear" onclick="clear();"></p>
+<p>ns:demo 1:<input id="demo1" class="demoval"/><input type="button" value="save" onclick="save('demo1');"/></p>
+<p>ns:demo 2:<input id="demo2" class="demoval"/><input type="button" value="save" onclick="save('demo2');"/></p>
+<p>ns:demo 3:<input id="demo3" class="demoval"/><input type="button" value="save" onclick="save('demo3');"/></p>
+<p>ns:test 1<input id="test1" class="demoval"/><input type="button" value="save" onclick="save2('test1');"/></p>
+<p>ns:test 2<input id="test2" class="demoval"/><input type="button" value="save" onclick="save2('test2');"/></p>
+
+<p><input type="button" value="clear ns:demo" onclick="empty();"></p>
 <script>
+if(!console){
+	console = {log:function(msg){
+		alert(msg);
+	}};
+}
 var storeDemo = cacheSvc.ins("demo"),
+	storeTest = cacheSvc.ins("test"),
 	save = function(id){
 		if(storeDemo.set(id,_d(id).value))
-			alert(id+" is saved.");
+			console.log(id+" is saved.");
 		else
-			alert(id+" saved error.");
+			console.log(id+" saved error.");
 	},
-	clear = function(){
+	save2 = function(id){
+		if(storeTest.set(id,_d(id).value))
+			console.log(id+" is saved.");
+		else
+			console.log(id+" saved error.");
+	},
+	//²»ÒªÈ¡clear()
+	empty = function(){
 		storeDemo.clear();
+		console.log("ns:demo is cleared");
 	},
 	_d = function(id){
 		return document.getElementById(id);
@@ -30,6 +47,8 @@ var storeDemo = cacheSvc.ins("demo"),
 _d("demo1").value = storeDemo.get("demo1");
 _d("demo2").value = storeDemo.get("demo2");	
 _d("demo3").value = storeDemo.get("demo3");
+_d("test1").value = storeTest.get("test1");
+_d("test2").value = storeTest.get("test2");
 </script>
 </body>
 </html>

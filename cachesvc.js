@@ -31,13 +31,12 @@ var JSON;JSON||(JSON={}),function(){function f(a){return a<10?"0"+a:a}function q
 			get: function(ns,key) {return localStorage.getItem(ns+key);},
 			remove: function(ns,key) {localStorage.removeItem(ns+key);},
 			clear:function(ns){
-				if(ns){
+				if(!ns){
 					localStorage.clear();
 				}else{
-					for(var i = 0,len = localStorage.length,key;i<len;i++) {
-						key = localStorage.key(i);
+					for(var i = 0,key;key = localStorage.key(i++);) {
 						if(key&&key.indexOf(ns)===0) {
-							localStorage.removeItem(ns+key);
+							localStorage.removeItem(key);
 						}
 					}
 				}
