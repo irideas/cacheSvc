@@ -34,9 +34,11 @@ var JSON;JSON||(JSON={}),function(){function f(a){return a<10?"0"+a:a}function q
 				if(!ns){
 					localStorage.clear();
 				}else{
-					for(var i = 0,key;key = localStorage.key(i++);) {
+					for(var i = 0,key;key = localStorage.key(i);) {
 						if(key&&key.indexOf(ns)===0) {
 							localStorage.removeItem(key);
+						}else{
+							i++;
 						}
 					}
 				}
