@@ -1,8 +1,17 @@
 /*
-*  cacheSvc.js
+*  cachesvc.js
 *
 */
+/*
+todo:
+// 增加KEY的FIX过程 原因如下
+// In IE7, keys may not contain special chars. See all of https://github.com/marcuswestin/store.js/issues/40
+var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
+function ieKeyFix(key) {
+	return key.replace(forbiddenCharsRegex, '___')
+}
 
+ */
 /* 
 *   JSON-API:
 *   JSON.stringify 
@@ -34,11 +43,9 @@ var JSON;JSON||(JSON={}),function(){function f(a){return a<10?"0"+a:a}function q
 				if(!ns){
 					localStorage.clear();
 				}else{
-					for(var i = 0,key;key = localStorage.key(i);) {
+					for(var i = localStorage.length-1, key; key = localStorage.key(i--);) {
 						if(key&&key.indexOf(ns)===0) {
 							localStorage.removeItem(key);
-						}else{
-							i++;
 						}
 					}
 				}
@@ -126,58 +133,57 @@ var JSON;JSON||(JSON={}),function(){function f(a){return a<10?"0"+a:a}function q
 			};
 		})(),
 		_ins = {},
-		cacheSvc = function(nameSpace){
-			this._cache = {};
+		CacheSVC = function(nameSpace, storeObj){
 			this._ns = prefix+"_"+nameSpace+"_";
 			this._inited = false;
-			if(storeSvc&&!this._inited){
-				storeSvc.init(this._ns);
+			//如果有storeObj，用【storeObj】存即仅用内存，不持久化，否则用storeSvc做持久化
+			this.storeSvc = storeObj ? {
+				init: function(ns){storeObj[ns] = {}},
+				get: function(ns, key){return storeObj[ns][key]},
+				set: function(ns, key, value){storeObj[ns][key] = value},
+				remove: function(ns, key){delete storeObj[ns][key]},
+				clear: function(ns){delete storeObj[ns]}
+			}: storeSvc;
+			this._obj = storeObj;
+			if(this.storeSvc&&!this._inited){
+				this.storeSvc.init(this._ns);
 			}
 		};
-		cacheSvc.serialize = function(value){
+		CacheSVC.serialize = function(value){
 			return JSON.stringify(value);
 		};
-		cacheSvc.unserialize = function(value){
+		CacheSVC.unserialize = function(value){
 			return JSON.parse(value);
 		};
-	cacheSvc.prototype = {
+	CacheSVC.prototype = {
 		set:function(key,value){
-			this._cache[key] = value;
 			try{
-				storeSvc.set(this._ns,key,cacheSvc.serialize(value));
+				this.storeSvc.set(this._ns,key,CacheSVC.serialize(value));
 				return true;
 			}catch(e){return false;}
 		},
 		get:function(key){
-			if(this._cache[key]){
-				return this._cache[key];
-			}
 			try{
-				return this._cache[key] = cacheSvc.unserialize(storeSvc.get(this._ns,key));
-			}catch(e){
-				return "";
-			}
+				return CacheSVC.unserialize(this.storeSvc.get(this._ns,key));
+			}catch(e){}
 		},
 		remove:function(key){
 			try{
-				storeSvc.remove(this._ns,key);
+				this.storeSvc.remove(this._ns,key);
 			}catch(e){}
-			this._cache[key] = null;
-			delete this._cache[key];
 		},
 		clear:function(){
 			try{
-				storeSvc.clear(this._ns);
+				this.storeSvc.clear(this._ns);
 			}catch(e){}
-			this._cache = {};
 		}
 	};
-	cacheSvc.ins = function(nameSpace){
-		if(!_ins[nameSpace])
+	CacheSVC.ins = function(nameSpace, storeObj){
+		if(!_ins[nameSpace] || _ins[nameSpace]._obj != storeObj)
 		{
-			_ins[nameSpace] = new cacheSvc(nameSpace);
+			_ins[nameSpace] = new CacheSVC(nameSpace, storeObj);
 		}
 		return _ins[nameSpace];	
 	};
-	window.cacheSvc = cacheSvc;
+	window.CacheSVC = CacheSVC;
 })();
